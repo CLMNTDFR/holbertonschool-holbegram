@@ -2,8 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/user_provider.dart';
+import '../screens/pages/methods/post_storage.dart';
 
-// Live list of posts from Firestore.
+// live list of posts from firestore.
 class Posts extends StatefulWidget {
   const Posts({super.key});
 
@@ -32,7 +33,8 @@ class _PostsState extends State<Posts> {
             itemCount: data.length,
             itemBuilder: (context, index) {
               var post = data[index];
-              var likes = post['likes'] ?? [];
+              var postData = post.data() as Map<String, dynamic>;
+              var likes = postData['likes'] ?? [];
               return SingleChildScrollView(
                 child: Container(
                   margin: EdgeInsetsGeometry.lerp(
@@ -56,22 +58,26 @@ class _PostsState extends State<Posts> {
                               height: 40,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                image: (post['profImage'] != null &&
-                                        post['profImage'].toString().isNotEmpty)
+                                image: (postData['profImage'] != null &&
+                                        postData['profImage']
+                                            .toString()
+                                            .isNotEmpty)
                                     ? DecorationImage(
-                                        image: NetworkImage(post['profImage']),
+                                        image: NetworkImage(
+                                          postData['profImage'],
+                                        ),
                                         fit: BoxFit.cover,
                                       )
                                     : null,
                               ),
-                              child: (post['profImage'] == null ||
-                                      post['profImage'].toString().isEmpty)
+                              child: (postData['profImage'] == null ||
+                                      postData['profImage'].toString().isEmpty)
                                   ? const Icon(Icons.person, size: 24)
                                   : null,
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              post['username'] ?? '',
+                              postData['username'] ?? '',
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -79,7 +85,14 @@ class _PostsState extends State<Posts> {
                             const Spacer(),
                             IconButton(
                               icon: const Icon(Icons.more_horiz),
-                              onPressed: () {
+                              onPressed: () async {
+                                await PostStorage().deletePost(
+                                  postData['postId'] ?? post.id,
+                                  postData['publicId'] ?? '',
+                                );
+                                if (!context.mounted) {
+                                  return;
+                                }
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text('Post Deleted'),
@@ -91,7 +104,7 @@ class _PostsState extends State<Posts> {
                         ),
                       ),
                       SizedBox(
-                        child: Text(post['caption'] ?? ''),
+                        child: Text(postData['caption'] ?? ''),
                       ),
                       const SizedBox(height: 10),
                       Container(
@@ -99,10 +112,10 @@ class _PostsState extends State<Posts> {
                         height: 350,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(25),
-                          image: (post['postUrl'] != null &&
-                                  post['postUrl'].toString().isNotEmpty)
+                          image: (postData['postUrl'] != null &&
+                                  postData['postUrl'].toString().isNotEmpty)
                               ? DecorationImage(
-                                  image: NetworkImage(post['postUrl']),
+                                  image: NetworkImage(postData['postUrl']),
                                   fit: BoxFit.cover,
                                 )
                               : null,
