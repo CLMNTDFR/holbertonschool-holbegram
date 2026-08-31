@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../methods/auth_methods.dart';
+import '../providers/user_provider.dart';
 import '../widgets/text_field.dart';
+import 'home.dart';
 import 'signup_screen.dart';
 
 // Login page. Controllers come from the parent so we can reuse them.
@@ -120,12 +123,30 @@ class _LoginScreenState extends State<LoginScreen> {
                         if (!context.mounted) {
                           return;
                         }
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              result == 'success' ? 'Login' : result,
+                        if (result == 'success') {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Login')),
+                          );
+                          try {
+                            await Provider.of<UserProvider>(
+                              context,
+                              listen: false,
+                            ).refreshUser();
+                          } catch (_) {}
+                          if (!context.mounted) {
+                            return;
+                          }
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const Home(),
                             ),
-                          ),
+                            (route) => false,
+                          );
+                          return;
+                        }
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(result)),
                         );
                       },
                       child: const Text(

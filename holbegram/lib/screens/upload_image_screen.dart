@@ -1,9 +1,12 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import '../methods/auth_methods.dart';
+import '../providers/user_provider.dart';
+import 'home.dart';
 
-// Pick a profile picture (gallery or camera) then continue signup.
+// pick a profile picture (gallery or camera) then continue signup.
 class AddPicture extends StatefulWidget {
   final String email;
   final String password;
@@ -173,6 +176,24 @@ class _AddPictureState extends State<AddPicture> {
                         ),
                       ),
                     );
+                    if (result == 'success') {
+                      try {
+                        await Provider.of<UserProvider>(
+                          context,
+                          listen: false,
+                        ).refreshUser();
+                      } catch (_) {}
+                      if (!context.mounted) {
+                        return;
+                      }
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const Home(),
+                        ),
+                        (route) => false,
+                      );
+                    }
                   },
                   child: const Text(
                     'Next',
