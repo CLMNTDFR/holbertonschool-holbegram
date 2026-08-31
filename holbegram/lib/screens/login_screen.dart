@@ -3,7 +3,7 @@ import '../methods/auth_methods.dart';
 import '../widgets/text_field.dart';
 import 'signup_screen.dart';
 
-// Login page. Controllers come from the parent so we can reuse them.// ment DEFER
+// Login page. Controllers come from the parent so we can reuse them.
 class LoginScreen extends StatefulWidget {
   final TextEditingController emailController;
   final TextEditingController passwordController;

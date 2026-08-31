@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/text_field.dart';
 import 'login_screen.dart';
+import 'upload_image_screen.dart';
 
 // Sign up page. Same look as login, extra name + confirm password.
 class SignUp extends StatefulWidget {
@@ -24,21 +25,6 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   // shared by both password fields
   bool _passwordVisible = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _passwordVisible = true;
-  }
-
-  @override
-  void dispose() {
-    widget.emailController.dispose();
-    widget.usernameController.dispose();
-    widget.passwordController.dispose();
-    widget.passwordConfirmController.dispose();
-    super.dispose();
-  }
 
   @override
   void initState() {
@@ -171,7 +157,16 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ),
                         onPressed: () {
-                          // signup submit comes in a later task (upload picture)
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AddPicture(
+                                email: widget.emailController.text,
+                                password: widget.passwordController.text,
+                                username: widget.usernameController.text,
+                              ),
+                            ),
+                          );
                         },
                         child: const Text(
                           'Sign up',

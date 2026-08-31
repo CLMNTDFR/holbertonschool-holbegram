@@ -45,5 +45,11 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Holbegram needs access to your photos to set a profile picture.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Holbegram needs the camera to take a profile picture.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Holbegram may use the microphone when recording from the camera.</string>
 </dict>
 </plist>
