@@ -6,7 +6,6 @@ import '../../providers/user_provider.dart';
 import '../home.dart';
 import 'methods/post_storage.dart';
 
-// Pick a photo, write a caption, then publish the post.
 class AddImage extends StatefulWidget {
   const AddImage({super.key});
 
@@ -28,8 +27,8 @@ class _AddImageState extends State<AddImage> {
     super.dispose();
   }
 
-  void selectImageFromGallery() async {
-    final picked = await _picker.pickImage(source: ImageSource.gallery);
+  Future<void> _pick(ImageSource source) async {
+    final picked = await _picker.pickImage(source: source);
     if (picked == null) {
       return;
     }
@@ -39,15 +38,35 @@ class _AddImageState extends State<AddImage> {
     });
   }
 
-  void selectImageFromCamera() async {
-    final picked = await _picker.pickImage(source: ImageSource.camera);
-    if (picked == null) {
-      return;
-    }
-    final bytes = await picked.readAsBytes();
-    setState(() {
-      _image = bytes;
-    });
+  void _chooseSource() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.image_outlined, color: _red),
+                title: const Text('Gallery'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pick(ImageSource.gallery);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_camera_outlined, color: _red),
+                title: const Text('Camera'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pick(ImageSource.camera);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _post() async {
@@ -102,143 +121,93 @@ class _AddImageState extends State<AddImage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          'Add Image',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w600,
+            fontSize: 20,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: _isLoading ? null : _post,
+            child: const Text(
+              'Post',
+              style: TextStyle(
+                fontFamily: 'Billabong',
+                fontSize: 28,
+                color: _red,
+              ),
+            ),
+          ),
+        ],
+      ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : SafeArea(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    const SizedBox(height: 12),
-                    const Text(
-                      'Holbegram',
-                      style: TextStyle(
-                        fontFamily: 'Billabong',
-                        fontSize: 50,
+          : SingleChildScrollView(
+              child: Column(
+                children: [
+                  const SizedBox(height: 24),
+                  const Text(
+                    'Add Image',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24),
+                    child: Text(
+                      'Choose an image from your gallery or take a one.',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: TextField(
+                      controller: _captionController,
+                      decoration: const InputDecoration(
+                        hintText: 'Write a caption...',
+                        border: InputBorder.none,
                       ),
                     ),
-                    Image(
-                      image: const AssetImage('assets/images/logo.webp'),
-                      width: 50,
-                      height: 50,
-                      fit: BoxFit.contain,
-                    ),
-                    const SizedBox(height: 12),
-                    const Text(
-                      'Add Image',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 28),
-                      child: Text(
-                        'Choose an image from your gallery or take a new one.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 14),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Container(
-                      width: 200,
-                      height: 200,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFE8E8E8),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      clipBehavior: Clip.antiAlias,
+                  ),
+                  const SizedBox(height: 20),
+                  GestureDetector(
+                    onTap: _chooseSource,
+                    child: Container(
+                      width: 280,
+                      height: 280,
+                      color: const Color(0xFFE0E0E0),
                       child: _image != null
                           ? Image.memory(
                               _image!,
-                              width: 200,
-                              height: 200,
                               fit: BoxFit.cover,
                             )
                           : Center(
                               child: Image.asset(
                                 'assets/images/add_image.png',
-                                width: 88,
-                                height: 88,
+                                width: 90,
+                                height: 90,
                                 errorBuilder: (context, error, stackTrace) {
                                   return const Icon(
                                     Icons.add_to_photos_outlined,
-                                    size: 72,
-                                    color: Colors.black87,
+                                    size: 80,
                                   );
                                 },
                               ),
                             ),
                     ),
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        IconButton(
-                          iconSize: 36,
-                          color: _red,
-                          icon: const Icon(Icons.image_outlined),
-                          onPressed: selectImageFromGallery,
-                        ),
-                        const SizedBox(width: 36),
-                        IconButton(
-                          iconSize: 36,
-                          color: _red,
-                          icon: const Icon(Icons.photo_camera_outlined),
-                          onPressed: selectImageFromCamera,
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
-                      child: TextField(
-                        controller: _captionController,
-                        decoration: InputDecoration(
-                          hintText: 'Write a caption...',
-                          hintStyle: TextStyle(color: Colors.grey.shade500),
-                          filled: true,
-                          fillColor: const Color(0xFFF3F3F3),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 14,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(6),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: SizedBox(
-                        height: 48,
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          style: ButtonStyle(
-                            backgroundColor: WidgetStateProperty.all(_red),
-                            elevation: WidgetStateProperty.all(0),
-                            shape: WidgetStateProperty.all(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                            ),
-                          ),
-                          onPressed: _post,
-                          child: const Text(
-                            'Post',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
     );
