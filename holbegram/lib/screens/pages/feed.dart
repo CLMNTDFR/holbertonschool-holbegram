@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../utils/posts.dart';
+import 'add_image.dart';
 
 // Feed tab: Holbegram header + the posts list.
 class Feed extends StatelessWidget {
@@ -34,7 +35,14 @@ class Feed extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AddImage(),
+                ),
+              );
+            },
             icon: const Icon(Icons.add, color: Colors.black),
           ),
           IconButton(
