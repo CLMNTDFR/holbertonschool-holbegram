@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import '../methods/auth_methods.dart';
 
 // Pick a profile picture (gallery or camera) then continue signup.
 class AddPicture extends StatefulWidget {
@@ -151,8 +152,27 @@ class _AddPictureState extends State<AddPicture> {
                       ),
                     ),
                   ),
-                  onPressed: () {
-                    // Next will call signUpUser in the following task
+                  onPressed: () async {
+                    var email = widget.email;
+                    var username = widget.username;
+                    var password = widget.password;
+
+                    String result = await AuthMethode().signUpUser(
+                      email: email,
+                      username: username,
+                      password: password,
+                      file: _image,
+                    );
+                    if (!context.mounted) {
+                      return;
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          result == 'success' ? 'success' : result,
+                        ),
+                      ),
+                    );
                   },
                   child: const Text(
                     'Next',

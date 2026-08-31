@@ -157,6 +157,7 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ),
                         onPressed: () {
+                          // pass the form data to the profile picture page
                           Navigator.push(
                             context,
                             MaterialPageRoute(
