@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/text_field.dart';
 import 'login_screen.dart';
 
+// Sign up page. Same look as login, extra name + confirm password.
 class SignUp extends StatefulWidget {
   final TextEditingController emailController;
   final TextEditingController usernameController;
@@ -21,7 +22,23 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
+  // shared by both password fields
   bool _passwordVisible = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _passwordVisible = true;
+  }
+
+  @override
+  void dispose() {
+    widget.emailController.dispose();
+    widget.usernameController.dispose();
+    widget.passwordController.dispose();
+    widget.passwordConfirmController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -153,7 +170,9 @@ class _SignUpState extends State<SignUp> {
                             ),
                           ),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          // signup submit comes in a later task (upload picture)
+                        },
                         child: const Text(
                           'Sign up',
                           style: TextStyle(color: Colors.white),
@@ -179,6 +198,7 @@ class _SignUpState extends State<SignUp> {
                     const Text('Have an account? '),
                     TextButton(
                       onPressed: () {
+                        // back to login (or a new login if we opened signup first)
                         Navigator.push(
                           context,
                           MaterialPageRoute(

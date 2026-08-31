@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// Reusable grey input used on login / signup.
 class TextFieldInput extends StatelessWidget {
   final TextEditingController controller;
   final bool ispassword;
@@ -48,6 +49,7 @@ class TextFieldInput extends StatelessWidget {
         suffixIcon: suffixIcon,
       ),
       textInputAction: TextInputAction.next,
+      // hide the text when this is a password field
       obscureText: ispassword,
     );
   }

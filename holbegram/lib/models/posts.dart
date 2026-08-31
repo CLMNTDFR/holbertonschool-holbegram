@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+// Post model for the "posts" collection (feed later).
 class Post {
   String caption;
   String uid;
@@ -21,6 +22,7 @@ class Post {
     required this.profImage,
   });
 
+  // Same idea as Users.fromSnap
   static Post fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
 
@@ -36,6 +38,7 @@ class Post {
     );
   }
 
+  // Dump the post as a map for Firestore
   Map<String, dynamic> toJson() {
     return {
       'caption': caption,

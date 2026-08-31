@@ -5,10 +5,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import '../models/user.dart';
 
+// Auth helpers for login / signup. Talks to Firebase Auth + Firestore.
+// http is here for Cloudinary uploads later.
 class AuthMethode {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  // Sign in with email + password. Returns "success" or an error string.
   Future<String> login({
     required String email,
     required String password,
@@ -27,6 +30,8 @@ class AuthMethode {
     }
   }
 
+  // Creates the Auth user then stores a Users doc in Firestore.
+  // file (profile pic) is optional for now.
   Future<String> signUpUser({
     required String email,
     required String password,
@@ -45,6 +50,7 @@ class AuthMethode {
       );
       User? user = userCredential.user;
 
+      // Map the form data onto our Users model (empty lists for now)
       Users users = Users(
         uid: user!.uid,
         email: email,
@@ -58,6 +64,7 @@ class AuthMethode {
         searchKey: username[0].toLowerCase(),
       );
 
+      // Save the profile under the Auth uid
       await _firestore.collection('users').doc(user.uid).set(users.toJson());
       return 'success';
     } catch (error) {

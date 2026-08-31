@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'screens/login_screen.dart';
 
+// App entry. Firebase has to be ready before we draw anything.
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -11,6 +12,7 @@ Future main() async {
   runApp(MyApp());
 }
 
+// Root widget. Starts on the login page for now.
 class MyApp extends StatelessWidget {
   MyApp({super.key});
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// Placeholder. Real AddPicture widget comes with the Cloudinary task.
 class UploadImageScreen extends StatelessWidget {
   const UploadImageScreen({super.key});
 

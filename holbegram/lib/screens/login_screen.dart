@@ -3,6 +3,7 @@ import '../methods/auth_methods.dart';
 import '../widgets/text_field.dart';
 import 'signup_screen.dart';
 
+// Login page. Controllers come from the parent so we can reuse them.// ment DEFER
 class LoginScreen extends StatefulWidget {
   final TextEditingController emailController;
   final TextEditingController passwordController;
@@ -18,6 +19,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  // true = password is visible (eye icon)
   bool _passwordVisible = true;
 
   @override
@@ -28,6 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
+    // avoid leaks when we leave the page
     widget.emailController.dispose();
     widget.passwordController.dispose();
     super.dispose();
@@ -109,6 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       onPressed: () async {
+                        // call Firebase login then show a snackbar
                         String result = await AuthMethode().login(
                           email: widget.emailController.text,
                           password: widget.passwordController.text,
@@ -160,6 +164,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const Text("Don't have an account"),
                   TextButton(
                     onPressed: () {
+                      // jump to the signup page
                       Navigator.push(
                         context,
                         MaterialPageRoute(
