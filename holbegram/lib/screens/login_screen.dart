@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../methods/auth_methods.dart';
 import '../widgets/text_field.dart';
 import 'signup_screen.dart';
 
@@ -107,7 +108,22 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
-                      onPressed: () {},
+                      onPressed: () async {
+                        String result = await AuthMethode().login(
+                          email: widget.emailController.text,
+                          password: widget.passwordController.text,
+                        );
+                        if (!context.mounted) {
+                          return;
+                        }
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              result == 'success' ? 'Login' : result,
+                            ),
+                          ),
+                        );
+                      },
                       child: const Text(
                         'Log in',
                         style: TextStyle(color: Colors.white),
