@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 // ignore: unused_import
 import 'package:http/http.dart' as http;
 import '../models/user.dart';
+import '../screens/auth/methods/user_storage.dart';
 
 // auth helpers for login / signup. Talks to Firebase Auth + Firestore.
 // http is here for Cloudinary uploads later.
@@ -50,13 +51,23 @@ class AuthMethode {
       );
       User? user = userCredential.user;
 
+      String photoUrl = '';
+      if (file != null) {
+        final uploaded = await StorageMethods().uploadImageToCloudinary(
+          false,
+          'profile',
+          file,
+        );
+        photoUrl = uploaded['url'] ?? '';
+      }
+
       // map the form data onto our Users model (empty lists for now)
       Users users = Users(
         uid: user!.uid,
         email: email,
         username: username,
         bio: '',
-        photoUrl: '',
+        photoUrl: photoUrl,
         followers: [],
         following: [],
         posts: [],
@@ -78,5 +89,9 @@ class AuthMethode {
     DocumentSnapshot snap =
         await _firestore.collection('users').doc(currentUser.uid).get();
     return Users.fromSnap(snap);
+  }
+
+  Future<void> signOut() async {
+    await _auth.signOut();
   }
 }
