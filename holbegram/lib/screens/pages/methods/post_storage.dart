@@ -47,6 +47,20 @@ class PostStorage {
     }
   }
 
+  Future<void> savePost(String uid, String postId) async {
+    final userDoc = await _firestore.collection('users').doc(uid).get();
+    final saved = List<dynamic>.from(userDoc.data()?['saved'] ?? []);
+    if (saved.contains(postId)) {
+      await _firestore.collection('users').doc(uid).update({
+        'saved': FieldValue.arrayRemove([postId]),
+      });
+    } else {
+      await _firestore.collection('users').doc(uid).update({
+        'saved': FieldValue.arrayUnion([postId]),
+      });
+    }
+  }
+
   Future<void> deletePost(String postId, String publicId) async {
     await _firestore.collection('posts').doc(postId).delete();
     // Cloudinary destroy needs the API secret, so we only drop the Firestore doc

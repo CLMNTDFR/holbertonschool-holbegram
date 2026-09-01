@@ -15,8 +15,7 @@ class Posts extends StatefulWidget {
 class _PostsState extends State<Posts> {
   @override
   Widget build(BuildContext context) {
-    // keep the provider in the tree so later actions can use getUser
-    Provider.of<UserProvider>(context);
+    final user = Provider.of<UserProvider>(context).user;
 
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('posts').snapshots(),
@@ -35,6 +34,8 @@ class _PostsState extends State<Posts> {
               var post = data[index];
               var postData = post.data() as Map<String, dynamic>;
               var likes = postData['likes'] ?? [];
+              var postId = postData['postId'] ?? post.id;
+              var isSaved = user?.saved.contains(postId) ?? false;
               return SingleChildScrollView(
                 child: Container(
                   margin: EdgeInsetsGeometry.lerp(
@@ -139,8 +140,29 @@ class _PostsState extends State<Posts> {
                             ),
                             const Spacer(),
                             IconButton(
-                              icon: const Icon(Icons.bookmark_border),
-                              onPressed: () {},
+                              icon: Icon(
+                                isSaved
+                                    ? Icons.bookmark
+                                    : Icons.bookmark_border,
+                              ),
+                              onPressed: () async {
+                                if (user == null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Please log in first'),
+                                    ),
+                                  );
+                                  return;
+                                }
+                                await PostStorage().savePost(user.uid, postId);
+                                if (!context.mounted) {
+                                  return;
+                                }
+                                await Provider.of<UserProvider>(
+                                  context,
+                                  listen: false,
+                                ).refreshUser();
+                              },
                             ),
                           ],
                         ),

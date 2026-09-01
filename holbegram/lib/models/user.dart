@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// User model stored in the "users" Firestore collection.
+// user model stored in the "users" Firestore collection.
 class Users {
   String uid;
   String email;
@@ -26,7 +26,7 @@ class Users {
     required this.searchKey,
   });
 
-  // Build a Users object from a Firestore document
+  // build a Users object from a Firestore document
   static Users fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
 
@@ -39,12 +39,12 @@ class Users {
       followers: snapshot['followers'],
       following: snapshot['following'],
       posts: snapshot['posts'],
-      saved: snapshot['saved'],
+      saved: snapshot['saved'] ?? [],
       searchKey: snapshot['searchKey'],
     );
   }
 
-  // Used when we write the user back to Firestore
+  // used when we write the user back to Firestore
   Map<String, dynamic> toJson() {
     return {
       'uid': uid,
